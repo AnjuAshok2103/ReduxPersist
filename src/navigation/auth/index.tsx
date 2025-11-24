@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Profile from '@src/screens/auth/Profile';
 import CartScreen from '@src/screens/auth/Cart';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import Details from '@src/screens/auth/Details';
 
 const AuthStack = createNativeStackNavigator<AuthStackParams>();
 const AuthBottomTab = createBottomTabNavigator<AuthBottomTabsParams>();
@@ -22,7 +23,7 @@ const AuthenticatedBottomTab = () => {
   }) => {
     let iconName = 'account-circle';
 
-    if (route.name === 'Home') {
+    if (route.name === 'Dashboard') {
       focused ? (iconName = 'home') : (iconName = 'home-outline');
     } else {
       focused ? (iconName = 'cart') : (iconName = 'cart-outline');
@@ -39,7 +40,7 @@ const AuthenticatedBottomTab = () => {
           tabBarIcon({ focused, route, color, size }),
       })}
     >
-      <AuthBottomTab.Screen name="Home" component={AuthenticatedStack} />
+      <AuthBottomTab.Screen name="Dashboard" component={AuthenticatedStack} />
       <AuthBottomTab.Screen name="Cart" component={CartScreen} />
     </AuthBottomTab.Navigator>
   );
@@ -49,6 +50,7 @@ const AuthenticatedStack = () => {
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name="Home" component={HomeScreen} />
       <AuthStack.Screen name="Profile" component={Profile} />
+      <AuthStack.Screen name="Details" component={Details} />
     </AuthStack.Navigator>
   );
 };

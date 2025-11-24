@@ -8,9 +8,10 @@ export type RootStackParams = {
 export type AuthStackParams = {
   Home: undefined;
   Profile: undefined;
+  Details: { productId: number };
 };
 export type AuthBottomTabsParams = {
-  Home: undefined;
+  Dashboard: undefined;
   Cart: undefined;
 };
 export type UnAuthStackParams = {
@@ -40,4 +41,26 @@ export type CustomButtonProps = {
   icon?: string;
   onPress: () => void;
   style?: ButtonProps['style'];
+};
+
+export type Product = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+  quantity?: number;
+};
+
+export type ProductsResponse = {
+  products: Product[];
+  total: number;
+  skip: number;
+  limit: number;
 };

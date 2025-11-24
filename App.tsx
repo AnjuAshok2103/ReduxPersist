@@ -6,11 +6,12 @@
  */
 
 import RootStackNav from '@src/navigation/root';
-import { store } from '@store/store';
+import { persistor, store } from '@store/store';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
+import { PersistGate } from 'redux-persist/integration/react';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -28,7 +29,9 @@ function App() {
 function AppContent() {
   return (
     <Provider store={store}>
-      <RootStackNav />
+      <PersistGate loading={null} persistor={persistor}>
+        <RootStackNav />
+      </PersistGate>
     </Provider>
   );
 }
