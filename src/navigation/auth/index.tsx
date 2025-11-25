@@ -47,8 +47,12 @@ const AuthenticatedBottomTab = () => {
 };
 const AuthenticatedStack = () => {
   return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="Home" component={HomeScreen} />
+    <AuthStack.Navigator screenOptions={{}}>
+      <AuthStack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
       <AuthStack.Screen name="Profile" component={Profile} />
       <AuthStack.Screen name="Details" component={Details} />
     </AuthStack.Navigator>

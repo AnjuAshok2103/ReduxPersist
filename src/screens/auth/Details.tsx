@@ -1,13 +1,27 @@
 import { View, Text, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AuthStackParams } from '@src/types';
+import { AuthStackParams, Product } from '@src/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import CustomButton from '@src/components/CustomButton';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { addToCart, removeFromCart } from '@src/redux/features/cartSlice';
 
+export const initialProduct = {
+  id: 0,
+  title: '',
+  description: '',
+  price: 0,
+  discountPercentage: 0,
+  rating: 0,
+  stock: 0,
+  brand: '',
+  category: '',
+  thumbnail: '',
+  images: [],
+  quantity: 0,
+};
 type DetailsScreenProps = NativeStackScreenProps<AuthStackParams, 'Details'>;
 const Details = ({ navigation, route }: DetailsScreenProps) => {
   const insets = useSafeAreaInsets();
@@ -17,11 +31,21 @@ const Details = ({ navigation, route }: DetailsScreenProps) => {
       p => p.id === route.params.productId,
     ),
   );
-  const [addToCartClicked, setAddToCartClicked] = useState(false);
-  const addToCartClickHandle = () => {
-    setAddToCartClicked(true);
-    dispatch(addToCart(product));
-  };
+  const { cart, totalAmount } = useAppSelector(state => state.cart);
+  const [currentItem, setCurrentItem] = useState<Product>(initialProduct);
+
+  useEffect(() => {
+    const itemChecking = () => {
+      const isPresent = cart.find(item => item.id === product?.id);
+      if (isPresent) {
+        product?.id && setCurrentItem(isPresent);
+      } else {
+        setCurrentItem(initialProduct);
+      }
+    };
+    itemChecking();
+  }, [cart]);
+
   return (
     <ScrollView
       style={{
@@ -121,8 +145,14 @@ const Details = ({ navigation, route }: DetailsScreenProps) => {
 
       {/* BUTTONS */}
       <View style={{ marginTop: 25 }}>
-        {addToCartClicked ? (
-          <View>
+        {currentItem?.quantity ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <CustomButton
               buttonText="-"
               onPress={() => {
@@ -130,13 +160,10 @@ const Details = ({ navigation, route }: DetailsScreenProps) => {
               }}
               style={{
                 backgroundColor: '#f28c8c',
-                paddingVertical: 5,
-                borderRadius: 25,
-                alignItems: 'center',
                 marginBottom: 12,
               }}
             />
-            <Text>{product?.quantity}</Text>
+            <Text>{currentItem?.quantity}</Text>
             <CustomButton
               buttonText="+"
               onPress={() => {
@@ -144,24 +171,19 @@ const Details = ({ navigation, route }: DetailsScreenProps) => {
               }}
               style={{
                 backgroundColor: '#f28c8c',
-                paddingVertical: 5,
-                borderRadius: 25,
-                alignItems: 'center',
                 marginBottom: 12,
               }}
             />
           </View>
         ) : (
           <CustomButton
+            mode="contained"
             buttonText="Add to Cart"
             onPress={() => {
-              addToCartClickHandle();
+              dispatch(addToCart(product));
             }}
             style={{
               backgroundColor: '#f28c8c',
-              paddingVertical: 5,
-              borderRadius: 25,
-              alignItems: 'center',
               marginBottom: 12,
             }}
           />
@@ -169,12 +191,11 @@ const Details = ({ navigation, route }: DetailsScreenProps) => {
 
         <CustomButton
           buttonText="View Cart"
-          onPress={() => {}}
+          onPress={() => {
+            navigation.getParent()?.navigate('Cart');
+          }}
           style={{
             backgroundColor: '#f28c8c',
-            paddingVertical: 5,
-            borderRadius: 25,
-            alignItems: 'center',
             marginBottom: 12,
           }}
         />

@@ -19,38 +19,39 @@ const CartSlice = createSlice({
       const isItemPresentAtIndex = cart.findIndex(
         item => item.id === action.payload.id,
       );
-      if (isItemPresentAtIndex !== -1) {
-        const updatedCart = [...cart];
-        updatedCart[isItemPresentAtIndex] = {
-          ...updatedCart[isItemPresentAtIndex],
-          quantity: updatedCart[isItemPresentAtIndex].quantity
-            ? updatedCart[isItemPresentAtIndex].quantity + 1
+      const calculateTotal = (products: Product[]) => {
+        return products.reduce((accumalator, currentItem) => {
+          return currentItem.quantity
+            ? accumalator + currentItem.quantity * currentItem.price
+            : accumalator + currentItem.price;
+        }, 0);
+      };
+      if (isItemPresentAtIndex != -1) {
+        const updateCart = [...cart];
+        updateCart[isItemPresentAtIndex] = {
+          ...updateCart[isItemPresentAtIndex],
+          quantity: updateCart[isItemPresentAtIndex].quantity
+            ? updateCart[isItemPresentAtIndex].quantity + 1
             : 1,
         };
-        const totalAmount = updatedCart.reduce(
-          (accumulator, currentItem) =>
-            currentItem.quantity
-              ? accumulator + currentItem.price * currentItem.quantity
-              : 0,
-          0,
-        );
+        const totalAmount = calculateTotal(updateCart);
         return {
           ...state,
-          cart: updatedCart,
+          cart: updateCart,
           totalAmount: totalAmount,
         };
       } else {
-        const finalData = [...cart, { ...action.payload, quantity: 1 }];
-        const totalAmount = finalData.reduce(
-          (accumulator, currentItem) =>
-            currentItem.quantity
-              ? accumulator + currentItem.price * currentItem.quantity
-              : 0,
-          0,
-        );
+        const updatedCart = [
+          ...cart,
+          {
+            ...action.payload,
+            quantity: 1,
+          },
+        ];
+        const totalAmount = calculateTotal(updatedCart);
         return {
           ...state,
-          cart: finalData,
+          cart: updatedCart,
           totalAmount: totalAmount,
         };
       }
@@ -60,37 +61,36 @@ const CartSlice = createSlice({
       const isItemPresentAtIndex = cart.findIndex(
         item => item.id === action.payload.id,
       );
-      const updatedCart = [...cart];
+      const updateCart = [...cart];
 
+      const calculateTotal = (products: Product[]) => {
+        return products.reduce((accumalator, currentItem) => {
+          return currentItem.quantity
+            ? accumalator + currentItem.quantity * currentItem.price
+            : accumalator + currentItem.price;
+        }, 0);
+      };
       if (isItemPresentAtIndex !== -1) {
         if (
-          updatedCart[isItemPresentAtIndex].quantity &&
-          updatedCart[isItemPresentAtIndex].quantity > 1
+          updateCart[isItemPresentAtIndex].quantity &&
+          updateCart[isItemPresentAtIndex].quantity > 1
         ) {
-          updatedCart[isItemPresentAtIndex] = {
-            ...updatedCart[isItemPresentAtIndex],
-            quantity: updatedCart[isItemPresentAtIndex].quantity
-              ? updatedCart[isItemPresentAtIndex].quantity - 1
-              : 0,
+          updateCart[isItemPresentAtIndex] = {
+            ...updateCart[isItemPresentAtIndex],
+            quantity: updateCart[isItemPresentAtIndex].quantity - 1,
           };
+        } else {
+          updateCart.splice(isItemPresentAtIndex, 1);
         }
-      } else {
-        updatedCart.splice(isItemPresentAtIndex, 1);
       }
-      const totalAmount = updatedCart.reduce(
-        (accumulator, currentItem) =>
-          currentItem.quantity
-            ? accumulator + currentItem.price * currentItem.quantity
-            : 0,
-        0,
-      );
+      const totalAmount = calculateTotal(updateCart);
       return {
         ...state,
-        cart: updatedCart,
+        cart: updateCart,
         totalAmount: totalAmount,
       };
     },
-    clearCart: (state, action) => {
+    clearCart: state => {
       return initialState;
     },
   },

@@ -11,19 +11,21 @@ const CustomButton = ({
   style,
 }: CustomButtonProps) => {
   return (
-    <View>
-      <Button
-        theme={{ roundness: 2 }}
-        icon={icon}
-        mode={mode || 'text'}
-        onPress={onPress}
-        style={{ ...style }}
-        textColor="#fff"
-        buttonColor="#303060"
-      >
-        {buttonText}
-      </Button>
-    </View>
+    <Button
+      theme={{ roundness: 2 }}
+      icon={icon}
+      mode={mode || 'contained'}
+      onPress={onPress}
+      style={{ borderRadius: 25, ...style }} // outer container (spacing)
+      contentStyle={{
+        paddingVertical: 4, // size of button
+      }}
+      rippleColor="rgba(255,255,255,0.3)" // ripple visible everywhere
+      textColor="#fff"
+      buttonColor="#303060"
+    >
+      {buttonText}
+    </Button>
   );
 };
 
